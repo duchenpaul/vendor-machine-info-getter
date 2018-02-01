@@ -36,4 +36,4 @@ Yellow LED: Login failed, need to refresh cookies
 
 
 ##TODO
-- Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file
+Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file

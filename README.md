@@ -16,7 +16,7 @@ A python crawler running on raspberry pi to get the machine status from admin pa
 
 
 ## Usage:
-1. Download this project on the raspberry pi
+1. Download this project on the raspberry pi, fill the  `Customized value` in each script
 2. Run `vm_ht_getter_for_pc.py` to refesh cookies
 3. Transfer `cookies cookies_*.txt` to the script folder on raspberry pi
 4. Run `batch_getter.py` on raspberry pi

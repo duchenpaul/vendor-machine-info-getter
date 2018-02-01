@@ -16,10 +16,10 @@ A python crawler running on raspberry pi to get the machine status from admin pa
 
 
 ## Usage:
-0, Download this project on the raspberry pi
-1, Run `vm_ht_getter_for_pc.py` to refesh cookies
-2, Transfer `cookies cookies_*.txt` to the script folder on raspberry pi
-3, Run `batch_getter.py` on raspberry pi
+1. Download this project on the raspberry pi
+2. Run `vm_ht_getter_for_pc.py` to refesh cookies
+3. Transfer `cookies cookies_*.txt` to the script folder on raspberry pi
+4. Run `batch_getter.py` on raspberry pi
 
 ### LED
 White LED: script is trying to login
@@ -34,4 +34,4 @@ Yellow LED: Login failed, need to refresh cookies
 `batch_getter_auto.log`: Log to help track shell script
 
 ##TODO
-- Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file.
+- Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file

@@ -34,4 +34,4 @@ Yellow LED: Login failed, need to refresh cookies
 `batch_getter_auto.log`: Log to help track shell script
 
 ## TODO
-Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file
+-Modify the script `vm_ht_getter_for_pc.py` to read parameters from config file

@@ -18,7 +18,7 @@ def alarm(last_status, current_status):
 	print("last_status: " + last_status) 
 	print("current_status: " + current_status)
 	if (last_status == '[在线]') and (current_status == '[离线]'):
-		send_mail('[Vender Machi] Offline', '{} is offline on {}. '.format(machineName,  time.asctime( time.localtime(time.time()) )), None, distri_list)
+		send_mail('[Vender Machi] Offline', '{} is offline on {}. Last seen: {}'.format(machineName,  time.asctime(time.localtime(time.time())), status['last_response_date']), None, distri_list)
 	elif (last_status == '[离线]') and (current_status == '[在线]'):
 		send_mail('[Vender Machi] Online', '{} is back online on {}. '.format(machineName,  time.asctime( time.localtime(time.time()) )), None, distri_list)
 	elif (last_status != 'Cookie_Invalid') and (current_status == 'Cookie_Invalid'):

@@ -4,10 +4,18 @@ import configparser
 from indicator import LED_indicator
 from send_mail import send_mail
 import logging, time
-import os.path, os, ast
+import os.path, os, ast, sys
 
-distri_list = 'user1@email.com, user2@email.com'
 alarmTrigger = 1
+
+try:
+	config = configparser.ConfigParser()
+	config.read('config.ini')
+except Exception as e:
+	print("Error read config file, check config.ini")
+	sys.exit(1)
+
+distri_list = config['mail']['distri_list']
 
 status_dict = {}
 
@@ -43,7 +51,7 @@ def log_status():
 	with open('./last_status.log', 'w') as f:
 		f.write(str(status_dict))
 
-
+	
 
 # LOG = './batch_getter_{}.log'.format(time.strftime("%Y%m%d_%H%M%S"))
 LOG = './batch_getter_{}.log'.format(time.strftime("%Y%m%d"))
@@ -66,8 +74,6 @@ def print(text, level = 'Info'):
 
 print(("======================{}====================").format(time.strftime("%Y/%m/%d %H:%M:%S")))
 
-config = configparser.ConfigParser()
-config.read('config.ini')
 
 No = 1
 LED_VM_Mapping = {
@@ -77,6 +83,9 @@ LED_VM_Mapping = {
 
 
 for profile in config.sections():
+	if not profile.startswith('USER_'):
+		continue
+
 	print('..........................')
 	machineName = config[profile]['username']
 	print("Check: " + machineName)

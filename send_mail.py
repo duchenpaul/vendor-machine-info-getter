@@ -11,22 +11,31 @@ from email.mime.base import MIMEBase
 from email import encoders
 import getopt
 from os.path import basename
+import configparser
+
 
 #Usage: python send_an_email_with_attachment.py subject content (-f FILEPATH -r "RECIPIENT_1@gmail.com,RECIPIENT_2@gmail.com")
 
-SMTP_SERVER = 'smtp.126.com'
+try:
+	config = configparser.ConfigParser()
+	config.read('config.ini')
+	SMTP_SERVER = config['mail']['SMTP_SERVER']
+	fromAddr = config['mail']['fromAddr']
+	PASSWORD = config['mail']['PASSWORD']
+	default_toAddr = config['mail']['default_toAddr']
+except Exception as e:
+	print("Error read config file, check config.ini")
+	sys.exit(1)
 
-fromAddr = "RECIPIENT_1@gmail.com"
-# fromAddr = "RASPBERRY_PI<RECIPIENT_1@gmail.com>"
-PASSWORD = "Mail_pa55w0rd"
 
-toAddr = "RECIPIENT_1@gmail.com"
-#toaddr = "RECIPIENT_1@gmail.com"
+# SMTP_SERVER = 'smtp.mail.com'
+# fromAddr = "fromAddr@mail.com"
+# PASSWORD = "PASSWORD"
+# default_toAddr = "default_toAddr@mail.com"
 
-def send_mail(subject, content, attach_file = None, recipients = toAddr):
+def send_mail(subject, content, attach_file = None, recipients = default_toAddr):
 	'''Usage: python send_an_email_with_attachment.py subject content (subject, content, attach_file = <FILEPATH>, recipients = "RECIPIENT_1@gmail.com,RECIPIENT_2@gmail.com")'''
-	fromAddr = "RECIPIENT_1@gmail.com"
-	toAddr = "RECIPIENT_1@gmail.com"
+
 	msg = MIMEMultipart()
 	 
 	# msg["Accept-Language"]="zh-CN"
@@ -54,6 +63,8 @@ def send_mail(subject, content, attach_file = None, recipients = toAddr):
 
 	if not (recipients is None):
 		toAddr = recipients
+	else:
+		toAddr = default_toAddr
 
 	msg.attach(MIMEText('<html><body>'+ body +'</body></html>','html','utf-8'))
 	#msg.attach(MIMEText(body, 'plain'))

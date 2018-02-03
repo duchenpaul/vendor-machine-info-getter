@@ -1,7 +1,7 @@
 import vm_ht_getter
 import bs4 as bs
 # import pandas as pd
-import csv
+import csv, codecs
 import configparser
 import hashlib, shutil
 from pathlib import Path
@@ -25,7 +25,7 @@ def get_tables(his_table_raw, csv_file):
 	# print(his_table)
 	his_table_row = his_table.find_all('tr')
 
-	with open(csv_file, 'w', newline='') as csvfile:
+	with codecs.open(csv_file, 'w', 'utf_8_sig') as csvfile:
 		writer = csv.writer(csvfile, delimiter=',',
 							quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		writer.writerow(['机器编号','货道','交易号','支付方式','销售金额(元)','成本(元)','利润(元)','商品名称','销售数量','销售时间','传输时间'])

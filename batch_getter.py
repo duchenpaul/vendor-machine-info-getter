@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import vm_ht_getter
+import vm_ht_getter, vm_ht_txn_his
 import configparser
 from indicator import LED_indicator
 from send_mail import send_mail
@@ -33,6 +33,7 @@ def alarm(last_status, current_status):
 		send_mail('[Vender Machi] Cookie Expired', 'Failed to log into {}, cookie is expired on {}. '.format(machineName,  time.asctime( time.localtime(time.time()) )), None, distri_list)
 	else:
 		print("Status not changed")
+	vm_ht_txn_his.check_txn_his()
 
 
 	
@@ -119,5 +120,5 @@ for profile in config.sections():
 	No += 1
 
 
-log_status()	
+log_status()
 print("=======================================================================\n\n")

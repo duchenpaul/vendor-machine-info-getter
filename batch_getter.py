@@ -5,8 +5,42 @@ from indicator import LED_indicator
 from send_mail import send_mail
 import logging, time
 import os.path, os, ast, sys
+from insert_into_DB import db_append_status
 
 alarmTrigger = 1
+log_into_DB_Trigger = 1
+
+def create_dir(dir_name):
+	path_name = "{}/{}".format(os.path.dirname(os.path.realpath(__file__)), dir_name)
+	not os.path.exists(path_name) and os.mkdir(path_name)
+
+# LOG = './batch_getter_{}.log'.format(time.strftime("%Y%m%d_%H%M%S"))
+create_dir('log')
+LOG = './log/batch_getter_{}.log'.format(time.strftime("%Y%m%d"))
+
+LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
+logging.basicConfig(filename = LOG,
+					level = logging.INFO,
+					format = LOG_FORMAT,
+					filemode = 'a') 
+logger = logging.getLogger()
+
+# redirect print into file. PART A
+orig_stdout = sys.stdout
+f = open(LOG, 'a')
+sys.stdout = f
+
+
+def print(text, level = 'Info'):
+	# print('[ {} ]: {}'.format(level, text))
+	if level == 'Info':
+		logger.info(text)
+	elif level == 'Error':
+		logger.error(text)
+	else:
+		logger.debug(text)
+
+
 
 try:
 	config = configparser.ConfigParser()
@@ -21,7 +55,7 @@ status_dict = {}
 
 def alarm(last_status, current_status):
 	'''Send notifications when status changes'''
-	if (alarmTrigger == 0) or (not os.path.isfile('./last_status.log')):
+	if (alarmTrigger == 0) or (not os.path.isfile('./log/last_status.log')):
 		return
 	print("last_status: " + last_status) 
 	print("current_status: " + current_status)
@@ -38,8 +72,8 @@ def alarm(last_status, current_status):
 
 	
 def read_log_status(machineName):
-	if os.path.isfile('./last_status.log'):
-		with open('./last_status.log', 'r') as f_read:
+	if os.path.isfile('./log/last_status.log'):
+		with open('./log/last_status.log', 'r') as f_read:
 			lastStatus = f_read.read()
 		lastStatusDict = ast.literal_eval(lastStatus)
 		try:
@@ -49,29 +83,13 @@ def read_log_status(machineName):
 		
 
 def log_status():
-	with open('./last_status.log', 'w') as f:
+	with open('./log/last_status.log', 'w') as f:
 		f.write(str(status_dict))
 
-	
+def append_status(machine_name, machine_status, last_response_date):
+	db_append_status(machine_name, machine_status, last_response_date)
 
-# LOG = './batch_getter_{}.log'.format(time.strftime("%Y%m%d_%H%M%S"))
-LOG = './batch_getter_{}.log'.format(time.strftime("%Y%m%d"))
 
-LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
-logging.basicConfig(filename = LOG,
-					level = logging.INFO,
-					format = LOG_FORMAT,
-					filemode = 'a') 
-logger = logging.getLogger()
-
-def print(text, level = 'Info'):
-	# print('[ {} ]: {}'.format(level, text))
-	if level == 'Info':
-		logger.info(text)
-	elif level == 'Error':
-		logger.error(text)
-	else:
-		logger.debug(text)
 
 print(("======================{}====================").format(time.strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -117,8 +135,13 @@ for profile in config.sections():
 	
 	alarm(read_log_status(machineName), status['machine_status'])
 	status_dict[machineName] = status
+	append_status(machineName, status['machine_status'], status['last_response_date'])
 	No += 1
 
 
 log_status()
 print("=======================================================================\n\n")
+
+# redirect print into file. PART B
+sys.stdout = orig_stdout
+f.close()

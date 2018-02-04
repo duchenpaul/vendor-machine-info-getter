@@ -1,7 +1,7 @@
 import vm_ht_getter
 import bs4 as bs
 # import pandas as pd
-import csv, codecs
+import csv, codecs, os
 import configparser
 import hashlib, shutil
 from pathlib import Path
@@ -16,6 +16,10 @@ except Exception as e:
 	sys.exit(1)
 
 distri_list = config['mail']['distri_list']
+
+def create_dir(dir_name):
+	path_name = "{}/{}".format(os.path.dirname(os.path.realpath(__file__)), dir_name)
+	not os.path.exists(path_name) and os.mkdir(path_name)
 
 def get_tables(his_table_raw, csv_file):
 	'''Get the tables from html, and export to csv'''
@@ -83,8 +87,9 @@ def check_txn_his():
 
 		print('..........................')
 		machineName = config[profile]['username']
-		trx_his_last = 'trx_his_last_{}.csv'.format(machineName)
-		trx_his_curr = 'trx_his_{}.csv'.format(machineName)
+		create_dir('export')
+		trx_his_last = './export/trx_his_last_{}.csv'.format(machineName)
+		trx_his_curr = './export/trx_his_{}.csv'.format(machineName)
 		refresh_last(trx_his_last, trx_his_curr)
 		print("Check: " + machineName)
 		vm_ht = vm_ht_getter.ht_getter(machineName, config[profile]['password'])

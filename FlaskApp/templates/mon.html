@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Machine Status</title>
+  <script type="text/javascript" src="http://cdn.hcharts.cn/highstock/highstock.js"></script>
+  <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+  <!--<script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/funnel.js"></script>-->
+  <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+  <script type="text/javascript">
+
+    
+  var data={{data}};
+    
+  //创建图表
+  var chart;
+  $(document).ready(function() {
+   Highcharts.setOptions({
+    global:{
+        useUTC:false
+    }
+   })
+
+
+   chart = new Highcharts.StockChart( {
+    chart : {
+     renderTo : 'container',
+     events : {
+      load : st
+     }
+    },
+    rangeSelector: {
+      buttons: [{
+                type: 'hour',
+                count: 1,
+                text: '1h'
+            }, {
+                type: 'day',
+                count: 1,
+                text: '1D'
+            }, {
+                type: 'week',
+                count: 1,
+                text: '1W'
+            }, {
+                type: 'all',
+                count: 1,
+                text: 'All'
+            }],
+      inputEnabled: $('#container').width() > 480,
+        selected: 1
+    },
+    exporting:{
+     enabled:true
+    },
+    title : {
+     text : 'Machine Status'
+    },
+    series : [ {
+     name: 'machine status',
+     data : data,
+     type: 'area',
+     fillColor: {
+                linearGradient: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 0,
+                    y2: 1
+                },
+                stops: [
+                    [0, Highcharts.getOptions().colors[0]],
+                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                ]
+            },
+     }]
+   });
+   
+   
+  });
+
+
+
+
+  //2秒钟刷新一次数据
+  function st() {
+   setInterval("getData()", 120000);
+  }
+
+
+  //动态更新图表数据
+  function getData() {
+
+
+   $.ajax({
+      type: "get",
+      url: "/new",
+      dataType: "json",
+      success : function(data){
+      chart.series[0].addPoint(data,true,true);
+
+
+      }
+    });
+  }
+
+
+  </script>
+ </head>
+ <body>
+
+  <script src="https://code.highcharts.com/themes/dark-unica.js"></script>
+
+<div id="container" ></div>
+ </body>
+</html>

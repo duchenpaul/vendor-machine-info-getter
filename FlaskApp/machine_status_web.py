@@ -19,12 +19,7 @@ try:
 except Exception as e:
 	print("Error read config file, check config.ini")
 	sys.exit(1)
-	
 
-db = mysql.connect(**config)
-db.autocommit(True)
-
-cursor = db.cursor()
 
 class ComplexEncoder(json.JSONEncoder):
 	def default(self, obj):
@@ -38,6 +33,8 @@ class ComplexEncoder(json.JSONEncoder):
 
 @app.route('/',methods=['GET','POST'])
 def hello():
+	db = mysql.connect(**config)
+	cursor = db.cursor()
 	sql = ''
 	if request.method == 'POST':
 		data = request.json
@@ -48,19 +45,26 @@ def hello():
 			pass
 		return 'OK'
 	else:
-		cursor.execute('select unix_timestamp(db_insert_date), machine_status from tbl_vm_status')
+		cursor.execute('select unix_timestamp(db_insert_date), machine_status from tbl_vm_status where machine_name = \'\' ')
 		ones = [[i[0]*1000,i[1]] for i in cursor.fetchall()]
 		print(json.dumps(ones, cls=ComplexEncoder))
 		return render_template('mon.html',data=json.dumps(ones, cls=ComplexEncoder))
 
+	db.close()
+
 
 @app.route('/new',methods=['GET'])
 def getnew():
-	cursor.execute('select unix_timestamp(db_insert_date), machine_status from tbl_vm_status  order by db_insert_date desc limit 1')
+	db = mysql.connect(**config)
+	cursor = db.cursor()
+
+	cursor.execute('select unix_timestamp(db_insert_date), machine_status from tbl_vm_status where machine_name = \'\' order by db_insert_date desc limit 1')
 	v = cursor.fetchone()
 	top = [v[0]*1000,v[1]]
 	print(top)
 	return json.dumps(top, cls=ComplexEncoder)
+
+	db.close()
 
 
 

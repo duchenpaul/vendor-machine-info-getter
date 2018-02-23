@@ -62,6 +62,11 @@
     title : {
      text : 'Machine Status'
     },
+    plotOptions: {
+        series: {
+            step: 'center' // or 'center' or 'right'
+        }
+    },
     series : [ {
      name: 'machine status',
      data : data,

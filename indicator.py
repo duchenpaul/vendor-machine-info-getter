@@ -20,6 +20,7 @@ class LED_indicator():
 		self.y = No[1]
 		self.Sense = SenseHat()
 		# self.Sense.clear()
+		self.Sense.low_light = True
 		self.Sense.set_rotation(get_orientation(), False)
 		self.Sense.set_pixel(self.x, self.y, WHITE)
 
